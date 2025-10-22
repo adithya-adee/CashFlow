@@ -1,0 +1,35 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+env/
+venv
+.venv/
+.env
+.pytest_cache/
+.mypy_cache/
+.eggs/
+*.egg-info/
+dist/
+build/
+
+# IDE-specific files (e.g., VS Code)
+.vscode/
+*.swp
+*.swo
+
+# Database files (if using SQLite or similar)
+*.sqlite3
+*.db
+*.db-journal
+
+# Logs
+*.log
+
+# FastAPI specific (if applicable)
+# For example, if you're generating OpenAPI schema or client code
+# You might want to ignore generated files if they are not meant to be tracked
+# generated_client/
+# openapi.json
