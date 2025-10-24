@@ -5,6 +5,8 @@ Provides RESTful API endpoints for managing bank accounts and cash flows.
 
 from fastapi import FastAPI
 
+from backend.controllers import cashflow
+
 from .controllers import account
 from . import models
 from .database import engine
@@ -18,10 +20,14 @@ app = FastAPI(
     version="1.0.0",
 )
 
+# Account Routes
 app.include_router(account.router)
+
+# CashFlow Routes
+app.include_router(cashflow.router)
+
 
 @app.get("/")
 def get_health_check():
     """Health check endpoint"""
     return {"Hello": "World"}
-
