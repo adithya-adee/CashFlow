@@ -1,0 +1,28 @@
+[project]
+name = "cash-flow-backend"
+version = "1.0.0"
+description = "A fastAPI backend for CashFlow Application"
+authors = [
+    {name = "adithya-adee",email = "adithya25905@gmail.com"}
+]
+license = {text = "MIT"}
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi (>=0.120.0,<0.121.0)",
+    "uvicorn (>=0.38.0,<0.39.0)",
+    "pydantic (>=2.12.3,<3.0.0)",
+    "sqlalchemy (>=2.0.44,<3.0.0)"
+    
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[dependency-groups]
+dev = [
+    "pytest (>=8.4.2,<9.0.0)",
+    "black (>=25.9.0,<26.0.0)"
+]
