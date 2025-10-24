@@ -9,7 +9,7 @@ from ..database import get_db
 router = APIRouter(prefix="/accounts", tags=["accounts"])
 
 
-@router.post("/", response_model=Account, status_code=status.HTTP_201_CREATED)
+@router.post("/add", response_model=Account, status_code=status.HTTP_201_CREATED)
 def create_account(body: AccountCreate, db: Session = Depends(get_db)) -> Account:
     """
     Create a new bank account.
@@ -56,7 +56,7 @@ def create_account(body: AccountCreate, db: Session = Depends(get_db)) -> Accoun
         )
 
 
-@router.get("/", response_model=list[Account], status_code=status.HTTP_200_OK)
+@router.get("/list", response_model=list[Account], status_code=status.HTTP_200_OK)
 def list_accounts(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=1000, description="Maximum records to return"),

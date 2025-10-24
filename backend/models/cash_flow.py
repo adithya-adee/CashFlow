@@ -27,7 +27,9 @@ class CashFlow(Base):
     amount = Column(Float, nullable=False)
     description = Column(String)
     created_at = Column(DateTime, default=func.now())  # Uses SQL CURRENT_TIMESTAMP
-    updated_at = Column(DateTime, default=func.now(), onupdate=func.now())
+    updated_at = Column(
+        DateTime, default=func.now(), onupdate=func.now()
+    )  # Uses SQL CURRENT_TIMESTAMP
 
     # Add check constraint for txn_type
     __table_args__ = (

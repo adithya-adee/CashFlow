@@ -15,6 +15,7 @@ class Account(Base):
     balance = Column(Float, nullable=False, default=0.0)
     currency = Column(String, nullable=False, default="INR")
     created_at = Column(DateTime, default=func.now())  # Uses SQL CURRENT_TIMESTAMP
+    updated_at = Column(DateTime, default=func.now())  # Uses SQL CURRENT_TIMESTAMP
 
     # Relationship
     cashflows = relationship(
