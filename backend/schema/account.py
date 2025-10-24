@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Annotated
 from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
-from enums import Currency, AccountType
+from .enums import Currency, AccountType
 
 
 class AccountBase(BaseModel):

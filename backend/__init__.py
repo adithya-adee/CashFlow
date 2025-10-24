@@ -1,3 +1,3 @@
-from . import models
+from .database import Base, get_db
 
-PACKAGE_VERSION = "1.0.0"
+__all__ = ["Base", "get_db"]

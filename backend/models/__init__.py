@@ -1,4 +1,4 @@
-from . import account
-from . import cash_flow
+from .account import Account
+from .cash_flow import CashFlow
 
-PACKAGE_VERSION = "1.0.0"
+__all__ = ["Account", "CashFlow"]

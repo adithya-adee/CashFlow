@@ -4,15 +4,10 @@ Provides RESTful API endpoints for managing bank accounts and cash flows.
 """
 
 from fastapi import FastAPI
-
-from backend.controllers import cashflow
-
-from .controllers import account
-from . import models
-from .database import engine
+from backend.controllers import account_router, cashflow_router
 
 # Initialize database tables on startup
-models.account.Base.metadata.create_all(bind=engine)
+# models.account.Base.metadata.create_all(bind=engine)
 
 app = FastAPI(
     title="CashFlow API",
@@ -21,10 +16,10 @@ app = FastAPI(
 )
 
 # Account Routes
-app.include_router(account.router)
+app.include_router(account_router)
 
 # CashFlow Routes
-app.include_router(cashflow.router)
+app.include_router(cashflow_router)
 
 
 @app.get("/")
