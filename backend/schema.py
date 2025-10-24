@@ -1,6 +1,6 @@
 from datetime import datetime
-from typing import Annotated
-from pydantic import BaseModel, StringConstraints, field_validator
+from typing import Annotated, Optional
+from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
 from enum import Enum
 
 
@@ -24,8 +24,7 @@ class Currency(str, Enum):
 
 
 # MODALS
-class Account(BaseModel):
-    id: int
+class AccountBase(BaseModel):
     bank_account_no: Annotated[
         str,
         StringConstraints(
@@ -39,23 +38,43 @@ class Account(BaseModel):
     holder_name: str
     balance: float
     currency: Currency = Currency.INR
-    created_at: datetime
 
 
-class CashFlow(BaseModel):
-    id: int
-    account_id = int
-    txn_type = TransactionType
-    category = str
-    amount = float
-    description = str
-    created_at = datetime
-    updated_at = datetime
+class AccountCreate(AccountBase):
+    balance: float = 0
 
-    @field_validator("amount")
+    @field_validator("balance")
     @classmethod
     def amount_must_be_positive(cls, value: float) -> float:
         if value < 0:
             raise ValueError("Amount must be positive value")
-
         return value
+
+
+class Account(AccountBase):
+    id: int
+    created_at: datetime
+
+
+class CashFlowBase(BaseModel):
+    account_id: int
+    txn_type: TransactionType
+    amount: float
+    category: Optional[str] = None
+    description: Optional[str] = None
+
+    @field_validator("amount")
+    @classmethod
+    def amount_must_be_positive(cls, value: float) -> float:
+        if value <= 0:
+            raise ValueError("Amount must be positive value")
+        return value
+
+
+class CashFlow(CashFlowBase):
+    id: int
+    created_at: datetime
+    updated_at: datetime
+
+    # For Pydantic V2 ORM mode
+    model_config = ConfigDict(from_attributes=True)

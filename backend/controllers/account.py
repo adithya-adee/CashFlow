@@ -1,45 +1,38 @@
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
+
+from backend.schema import AccountCreate
 from ..database import get_db
-from fastapi import APIRouter,Depends, HTTPException, status
+from fastapi import APIRouter, Depends, HTTPException, status
 from .. import models
 
 router = APIRouter()
 
+
 @router.post("/accounts/", status_code=status.HTTP_201_CREATED)
-def create_account(
-    bank_account_no: str,
-    bank_name: str,
-    holder_name: str,
-    account_type: str = "savings",
-    balance: float = 0.0,
-    currency: str = "INR",
-    db: Session = Depends(get_db),
-):
+def create_account(body: AccountCreate, db: Session = Depends(get_db)):
     """
-    Create a new bank account.
+        Create a new bank account.
 
-    Returns:
-        The created account with auto-generated ID and timestamp
-
-    Raises:
-        400: If account number already exists or validation fails
+        Returns:
+            The created account with auto-generated ID and timestamp
+    Raises: 400: If account number already exists or validation fails
     """
     # Check if account number already exists
     existing_account = (
         db.query(models.account.Account)
-        .filter(models.account.Account.bank_account_no == bank_account_no)
+        .filter(models.account.Account.bank_account_no == body.bank_account_no)
         .first()
     )
 
     if existing_account:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"Account number '{bank_account_no}' already exists",
+            detail=f"Account number '{body.bank_account_no}' already exists",
         )
 
     # Validate balance is non-negative
-    if balance < 0:
+    if body.balance < 0:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST, detail="Balance cannot be negative"
         )
@@ -47,12 +40,12 @@ def create_account(
     try:
         # Create new account
         db_account = models.account.Account(
-            bank_account_no=bank_account_no,
-            bank_name=bank_name,
-            holder_name=holder_name,
-            account_type=account_type,
-            balance=balance,
-            currency=currency,
+            bank_account_no=body.bank_account_no,
+            bank_name=body.bank_name,
+            holder_name=body.holder_name,
+            account_type=body.account_type,
+            balance=body.balance,
+            currency=body.currency,
         )
         db.add(db_account)
         db.commit()
