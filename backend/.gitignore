@@ -33,3 +33,4 @@ build/
 # You might want to ignore generated files if they are not meant to be tracked
 # generated_client/
 # openapi.json
+test_file.json
