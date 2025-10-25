@@ -1,6 +1,6 @@
 from .enums import TransactionType, AccountType, Currency
-from .account import AccountBase, AccountCreate, Account
-from .cash_flow import CashFlowBase, CashFlowCreate, CashFlow
+from .account import AccountBase, AccountCreate, Account, AccountEdit
+from .cash_flow import CashFlowBase, CashFlowCreate, CashFlowEdit, CashFlow
 
 __all__ = [
     "TransactionType",
@@ -8,8 +8,10 @@ __all__ = [
     "Currency",
     "AccountBase",
     "AccountCreate",
+    "AccountEdit",
     "Account",
     "CashFlowBase",
     "CashFlowCreate",
+    "CashFlowEdit",
     "CashFlow",
 ]

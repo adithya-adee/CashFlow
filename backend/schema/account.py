@@ -1,5 +1,5 @@
 from datetime import datetime
-from typing import Annotated
+from typing import Annotated, Optional
 from pydantic import BaseModel, ConfigDict, StringConstraints, field_validator
 from .enums import Currency, AccountType
 
@@ -21,6 +21,22 @@ class AccountBase(BaseModel):
 
 class AccountCreate(AccountBase):
     balance: float = 0.0
+
+    @field_validator("balance")
+    @classmethod
+    def non_negative_balance(cls, value: float) -> float:
+        if value < 0:
+            raise ValueError("Balance shouldn't be less than 0")
+        return value
+
+
+class AccountEdit(BaseModel):
+    bank_account_no: Optional[str] = None
+    bank_name: Optional[str] = None
+    account_type: Optional[str] = None
+    holder_name: Optional[str] = None
+    currency: Optional[str] = None
+    balance: Optional[float] = None
 
     @field_validator("balance")
     @classmethod
