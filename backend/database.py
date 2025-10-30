@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 from sqlalchemy.ext.declarative import declarative_base
 
 # Database connection URL
-SQLITE_DB_URL = "sqlite+aiosqlite:///../app.db"
+SQLITE_DB_URL = "sqlite+aiosqlite:///./data/app.db"
 
 # Create database engine
 # pool_pre_ping ensures connections are alive before using them
