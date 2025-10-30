@@ -18,7 +18,7 @@ EXPOSE 69
 
 # Command to run the FastAPI application using uvicorn
 # Assuming your FastAPI app instance is named 'app' in main.py
-CMD ["uvicorn", "main:app", "--host", "0.0.0.0", "--port", "69"]
+CMD ["poetry", "run", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "69"]
 
 # Command to run the FastAPI application using fastapi
-# CMD ["fastapi", "run", "main.py", "--port", "69"]
+# CMD ["fastapi", "run", "main.py"]

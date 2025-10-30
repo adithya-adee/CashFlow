@@ -5,10 +5,10 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from ..schema import TransactionType
-from ..models import Account as AccountModel, CashFlow as CashFlowModel
-from ..schema.dashboard import SuperDashboardQuery
-from ..database import get_db
+from schema import TransactionType
+from models import Account as AccountModel, CashFlow as CashFlowModel
+from schema.dashboard import SuperDashboardQuery
+from database import get_db
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
 logger = logging.getLogger(__name__)
@@ -66,7 +66,7 @@ async def super_dashboard(
                 "total_accounts": total_accounts,
                 "total_cashflows": total_cashflows,
                 "total_credits_count": total_credits_count,
-                "total_debits_count" : total_debits_count
+                "total_debits_count": total_debits_count,
             },
             "balance_summary": {
                 "total_balance": total_balance,

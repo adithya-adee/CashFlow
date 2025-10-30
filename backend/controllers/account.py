@@ -6,9 +6,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 
-from ..schema import AccountCreate, Account, AccountEdit
-from ..models import Account as AccountModel, CashFlow as CashFlowModel
-from ..database import get_db
+from schema import AccountCreate, Account, AccountEdit
+from models import Account as AccountModel, CashFlow as CashFlowModel
+from database import get_db
 
 router = APIRouter(prefix="/accounts", tags=["accounts"])
 logger = logging.getLogger(__name__)
