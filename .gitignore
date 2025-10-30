@@ -1,0 +1,5 @@
+app.db
+backup/
+*.sh
+.idea/
+node_modules/
