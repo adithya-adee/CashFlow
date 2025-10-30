@@ -1,0 +1,10 @@
+---
+config:
+  theme: redux
+  layout: dagre
+---
+flowchart LR
+    API["API Gateway"] --> ACC["Accounts Service"] & CF["CashFlow Service"] & DB["Dashboard Service"]
+    ACC --> A1["GET /accounts/list<br>(List all accounts)"] & A2["GET /accounts/:id<br>(Get account details)"] & A3["POST /accounts/add<br>(Create account)"] & A4["PATCH /accounts/:id<br>(Update account)"] & A5["DELETE /accounts/:id<br>(Delete account)"]
+    CF --> C1["GET /cashflow/list<br>(List all transactions)"] & C2["GET /cashflow/:id<br>(Get transaction details)"] & C3["POST /cashflow/add<br>(Create transaction)"] & C4["PATCH /cashflow/:id<br>(Update transaction)"] & C5["DELETE /cashflow/:id<br>(Delete transaction)"]
+    DB --> D1["POST /dashboard/super<br>(Get dashboard stats)"]

@@ -1,0 +1,49 @@
+graph TB
+    User["User"]
+    User --> MainLayout["Main Application Layout"]
+    
+    MainLayout --> Navbar["Navigation Bar"]
+    Navbar --> AccountDropdown["Account / Super Admin Selector"]
+    AccountDropdown --> GlobalFilterState["Global Filter State"]
+    
+    Navbar --> N_Dashboard["Dashboard Link"]
+    Navbar --> N_Accounts["Accounts Link"]
+    Navbar --> N_CashFlow["CashFlow Link"]
+    Navbar --> N_Settings["Settings / Profile Link"]
+    
+    N_Dashboard --> P1["Dashboard Page"]
+    N_Accounts --> P2["Accounts Page"]
+    N_CashFlow --> P3["CashFlow Page"]
+    N_Settings --> P4["Settings Page"]
+    
+    GlobalFilterState -.-> P1
+    GlobalFilterState -.-> P2
+    GlobalFilterState -.-> P3
+    
+    P1 --> DAPI["Dashboard API<br/>(Filtered Request)"]
+    P2 --> AAPI["Accounts API<br/>(Filtered Request)"]
+    P3 --> CFAPI["CashFlow API<br/>(Filtered Request)"]
+    
+    DAPI --> DR1["DashboardOverview.tsx"]
+    DAPI --> DR2["BalanceChart.tsx"]
+    DAPI --> DR3["RecentTransactions.tsx"]
+    
+    P2 --> AR1["AccountList.tsx"]
+    P2 --> AR2["AccountForm.tsx"]
+    P2 --> AR3["AccountDetails.tsx"]
+    
+    P3 --> CR1["TransactionList.tsx"]
+    P3 --> CR2["TransactionForm.tsx"]
+    P3 --> CR3["TransactionDetails.tsx"]
+    
+    DR1 --> UI["Shadcn UI Components<br/>(Card, Table, Button, Select, Dialog)"]
+    DR2 --> UI
+    DR3 --> UI
+    AR1 --> UI
+    AR2 --> UI
+    AR3 --> UI
+    CR1 --> UI
+    CR2 --> UI
+    CR3 --> UI
+    
+    UI --> Icons["Lucide React Icons<br/>(Home, Accounts, Transactions, Chart, Admin)"]
