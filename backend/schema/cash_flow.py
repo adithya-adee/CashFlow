@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Optional
 from pydantic import BaseModel, ConfigDict, field_validator
-from .enums import TransactionType
+from schema.enums import TransactionType
 
 
 class CashFlowBase(BaseModel):
