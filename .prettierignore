@@ -1,0 +1,12 @@
+# Backend
+backend/
+
+# Node
+node_modules/
+frontend/node_modules/
+
+# Lock files
+bun.lock
+
+# IDE
+.idea/

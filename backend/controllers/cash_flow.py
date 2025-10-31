@@ -6,9 +6,9 @@ from sqlalchemy import and_, delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 
-from ..models import CashFlow as CashFlowModel, Account as AccountModel
-from ..schema import CashFlow, CashFlowCreate, CashFlowEdit, TransactionType
-from ..database import get_db
+from models import CashFlow as CashFlowModel, Account as AccountModel
+from schema import CashFlow, CashFlowCreate, CashFlowEdit, TransactionType
+from database import get_db
 
 router = APIRouter(prefix="/cashflow", tags=["cashflow"])
 logger = logging.getLogger(__name__)

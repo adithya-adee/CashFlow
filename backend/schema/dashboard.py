@@ -1,7 +1,7 @@
 from typing import Optional
 from pydantic import BaseModel, field_validator, model_validator
 
-from .enums import TransactionType
+from schema.enums import TransactionType
 
 
 class SuperDashboardQuery(BaseModel):
