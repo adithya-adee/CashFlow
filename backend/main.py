@@ -6,6 +6,7 @@ Provides RESTful API endpoints for managing bank accounts and cash flows.
 import logging
 from contextlib import asynccontextmanager
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 
 from database import Base, async_engine
 from controllers import account_router, cashflow_router, dashboard_router
@@ -30,6 +31,16 @@ app = FastAPI(
     title="CashFlow API",
     description="API for managing bank accounts and cash flow tracking",
     version="1.0.0",
+)
+
+origins = ["http://localhost:5173"]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"]
 )
 
 # Account Routes
