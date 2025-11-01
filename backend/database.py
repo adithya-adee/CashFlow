@@ -3,8 +3,10 @@ Database configuration and session management.
 Provides SQLAlchemy engine, session factory, and base class for ORM models.
 """
 
+from sqlalchemy import event
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 from sqlalchemy.orm import declarative_base
+import re
 
 # Database connection URL
 SQLITE_DB_URL = "sqlite+aiosqlite:///./data/app.db"
@@ -26,6 +28,12 @@ AsyncSessionLocal = async_sessionmaker(
 
 # Base class for all ORM models
 Base = declarative_base()
+
+@event.listens_for(async_engine.sync_engine, "connect")
+def _setup_sqlite_regexp(dbapi_connection, connection_record):
+    def regexp(pattern, value):
+        return re.search(pattern, value) is not None
+    dbapi_connection.create_function("REGEXP", 2, regexp)
 
 
 async def get_db():

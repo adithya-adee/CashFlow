@@ -363,6 +363,7 @@ export function Accounts() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead>Account ID</TableHead>
               <TableHead>Account No.</TableHead>
               <TableHead>Bank Name</TableHead>
               <TableHead>Type</TableHead>
@@ -382,6 +383,7 @@ export function Accounts() {
             ) : (
               accounts.map((acc) => (
                 <TableRow key={acc.id}>
+                  <TableCell>{acc.id}</TableCell>
                   <TableCell>{acc.bank_account_no}</TableCell>
                   <TableCell>{acc.bank_name}</TableCell>
                   <TableCell>{acc.account_type}</TableCell>

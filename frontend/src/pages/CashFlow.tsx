@@ -1,11 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import {
   listCashFlow,
   addCashFlow,
   editCashFlow,
   deleteCashFlow,
 } from '@/api/cashflow';
-import type { CashFlow, CashFlowCreate, CashFlowEdit } from '@/types/cash_flow';
+import type { CashFlowCreate, CashFlowEdit, CashFlowWithAccountDetails } from '@/types/cash_flow';
+import { categoryOptions } from '@/types/cash_flow';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import {
@@ -37,7 +38,7 @@ import { Loader2, Pencil, Trash2, Plus, Filter } from 'lucide-react';
 const PAGE_SIZE = 10;
 
 export function CashFlowPage() {
-  const [transactions, setTransactions] = useState<CashFlow[]>([]);
+  const [transactions, setTransactions] = useState<CashFlowWithAccountDetails[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [total, setTotal] = useState<number>(0);
   const [page, setPage] = useState<number>(1);
@@ -46,9 +47,13 @@ export function CashFlowPage() {
   // Filter states
   const [filters, setFilters] = useState({
     account_id: '',
+    account_no_regex: '',
     txn_type: '',
     category: '',
   });
+
+  // Debounced account number for regex search
+  const [debouncedAccountNo, setDebouncedAccountNo] = useState('');
 
   const [form, setForm] = useState<CashFlowCreate>({
     account_id: 0,
@@ -61,55 +66,61 @@ export function CashFlowPage() {
   const [editId, setEditId] = useState<number | null>(null);
   const [editForm, setEditForm] = useState<CashFlowEdit>({});
 
-  const fetchTransactions = async () => {
+  // Debounce effect for account number regex search
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedAccountNo(filters.account_no_regex);
+    }, 500); // Wait 500ms after user stops typing
+
+    return () => clearTimeout(timer);
+  }, [filters.account_no_regex]);
+
+  const fetchTransactions = useCallback(async () => {
     setLoading(true);
     try {
       const skip = (page - 1) * PAGE_SIZE;
-      const response = await listCashFlow({}, skip, PAGE_SIZE);
-      console.log(response);
 
-      // Apply client-side filtering
-      let filteredData = response.data;
+      // Build query filters for backend
+      const queryFilters: Record<string, string> = {};
 
       if (filters.account_id) {
-        filteredData = filteredData.filter(
-          (tx: CashFlow) => tx.account_id.toString() === filters.account_id
-        );
+        queryFilters.account_id = filters.account_id;
+      }
+
+      // Use debounced value for regex search
+      if (debouncedAccountNo) {
+        queryFilters.account_no_regex = debouncedAccountNo;
       }
 
       if (filters.txn_type) {
-        filteredData = filteredData.filter(
-          (tx: CashFlow) => tx.txn_type === filters.txn_type
-        );
+        queryFilters.txn_type = filters.txn_type;
       }
 
       if (filters.category) {
-        filteredData = filteredData.filter((tx: CashFlow) =>
-          tx.category?.toLowerCase().includes(filters.category.toLowerCase())
-        );
+        queryFilters.category = filters.category;
       }
 
-      setTransactions(filteredData);
+      const response = await listCashFlow(queryFilters, skip, PAGE_SIZE);
+      console.log(response);
+
+      setTransactions(response.data);
       setTotal(response.total_count);
     } catch {
       toast.error('Failed to fetch transactions');
     } finally {
       setLoading(false);
     }
-  };
+  }, [
+    page,
+    filters.account_id,
+    filters.txn_type,
+    filters.category,
+    debouncedAccountNo,
+  ]);
 
   useEffect(() => {
     fetchTransactions();
-  }, [page]);
-
-  useEffect(() => {
-    // Reset to page 1 when filters change
-    if (page === 1) {
-      fetchTransactions();
-    } else {
-      setPage(1);
-    }
-  }, [filters]);
+  }, [fetchTransactions]);
 
   const handleAdd = async () => {
     try {
@@ -160,6 +171,7 @@ export function CashFlowPage() {
   const clearFilters = () => {
     setFilters({
       account_id: '',
+      account_no_regex: '',
       txn_type: '',
       category: '',
     });
@@ -178,12 +190,22 @@ export function CashFlowPage() {
       <Card className="p-4">
         <div className="flex items-center gap-2 mb-4">
           <Filter size={20} className="text-gray-500" />
-          <input
+          {/* <input
             type="text"
             placeholder="Account ID"
             value={filters.account_id}
             onChange={(e) => handleFilterChange('account_id', e.target.value)}
             className="border rounded px-3 py-2 w-32"
+          /> */}
+          <input
+            type="text"
+            placeholder="Account No. (regex)"
+            value={filters.account_no_regex}
+            onChange={(e) =>
+              handleFilterChange('account_no_regex', e.target.value)
+            }
+            className="border rounded px-3 py-2 w-auto"
+            title="Search by account number pattern"
           />
           <select
             value={filters.txn_type}
@@ -194,13 +216,18 @@ export function CashFlowPage() {
             <option value="credit">Credit</option>
             <option value="debit">Debit</option>
           </select>
-          <input
-            type="text"
-            placeholder="Category"
+          <select
             value={filters.category}
             onChange={(e) => handleFilterChange('category', e.target.value)}
             className="border rounded px-3 py-2 flex-1"
-          />
+          >
+            <option value="">All Categories</option>
+            {categoryOptions.map((opt) => (
+              <option key={opt.value} value={opt.value}>
+                {opt.label}
+              </option>
+            ))}
+          </select>
           <Button onClick={clearFilters} variant="outline">
             Clear
           </Button>
@@ -269,15 +296,20 @@ export function CashFlowPage() {
                   <label className="block text-sm font-medium mb-1">
                     Category
                   </label>
-                  <input
-                    type="text"
-                    placeholder="Category"
+                  <select
                     value={form.category}
                     onChange={(e) =>
                       setForm((f) => ({ ...f, category: e.target.value }))
                     }
                     className="border rounded px-3 py-2 w-full"
-                  />
+                  >
+                    <option value="">Select Category</option>
+                    {categoryOptions.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
                 </div>
                 <div>
                   <label className="block text-sm font-medium mb-1">
@@ -316,6 +348,7 @@ export function CashFlowPage() {
           <TableHeader>
             <TableRow>
               <TableHead>Account ID</TableHead>
+              <TableHead>Account No</TableHead>
               <TableHead>Type</TableHead>
               <TableHead>Amount</TableHead>
               <TableHead>Category</TableHead>
@@ -335,6 +368,7 @@ export function CashFlowPage() {
               transactions.map((tx) => (
                 <TableRow key={tx.id}>
                   <TableCell>{tx.account_id}</TableCell>
+                  <TableCell>{tx.bank_account_no}</TableCell>
                   <TableCell>
                     <span
                       className={`inline-flex items-center px-2 py-1 rounded text-xs font-medium ${
@@ -519,15 +553,20 @@ export function CashFlowPage() {
                 <label className="block text-sm font-medium mb-1">
                   Category
                 </label>
-                <input
-                  type="text"
-                  placeholder="Category"
+                <select
                   value={editForm.category ?? ''}
                   onChange={(e) =>
                     setEditForm((f) => ({ ...f, category: e.target.value }))
                   }
                   className="border rounded px-3 py-2 w-full"
-                />
+                >
+                  <option value="">Select Category</option>
+                  {categoryOptions.map((opt) => (
+                    <option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div>
                 <label className="block text-sm font-medium mb-1">

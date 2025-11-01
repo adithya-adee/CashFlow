@@ -6,8 +6,8 @@ from schema.enums import TransactionType
 
 class CashFlowBase(BaseModel):
     account_id: int
-    txn_type: TransactionType
-    amount: float
+    txn_type: TransactionType 
+    amount: float 
     category: Optional[str] = None
     description: Optional[str] = None
 
@@ -16,6 +16,18 @@ class CashFlowBase(BaseModel):
     def amount_must_be_positive(cls, value: float) -> float:
         if value <= 0:
             raise ValueError("Amount must be a positive value if provided")
+        return value
+
+    @field_validator("txn_type", mode="before")
+    @classmethod
+    def validate_txn_type(cls, value):
+        if isinstance(value, str):
+            try:
+                return TransactionType(value)
+            except ValueError:
+                raise ValueError(
+                    f"Invalid transaction type : {value}, must be one of {[e.value for e in TransactionType]}"
+                )
         return value
 
 
@@ -44,5 +56,12 @@ class CashFlow(CashFlowBase):
     id: int
     created_at: datetime
     updated_at: datetime
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class CashFlowWithAccountDetails(CashFlow):
+    bank_account_no: str
+    currency: str
 
     model_config = ConfigDict(from_attributes=True)

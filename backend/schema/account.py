@@ -19,6 +19,30 @@ class AccountBase(BaseModel):
     holder_name: str
     currency: Currency = Currency.INR
 
+    @field_validator("account_type", mode="before")
+    @classmethod
+    def validate_account_type(cls, value):
+        if isinstance(value, str):
+            try:
+                return AccountType(value)
+            except ValueError:
+                raise ValueError(
+                    f"Invalid account type: {value}. Must be one of {[e.value for e in AccountType]}"
+                )
+        return value
+
+    @field_validator("currency", mode="before")
+    @classmethod
+    def validate_currency(cls, value):
+        if isinstance(value, str):
+            try:
+                return Currency(value)
+            except ValueError:
+                raise ValueError(
+                    f"Invalid currency: {value}. Must be one of {[e.value for e in Currency]}"
+                )
+        return value
+
 
 class AccountCreate(AccountBase):
     balance: float = 0.0
