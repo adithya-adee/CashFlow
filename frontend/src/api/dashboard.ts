@@ -1,6 +1,6 @@
 import type { DashboardStats, SuperDashboardQuery } from '../types/dashboard';
 
-const BASE_URL = import.meta.env.VITE_BASE_URL
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_BASE = `${BASE_URL}/dashboard`;
 
 export async function getDashboardStats(

@@ -10,7 +10,7 @@ export function DashboardOverview({ stats }: { stats: DashboardStats }) {
         <div>
           <div className="text-lg font-bold">Total Balance</div>
           <div className="text-2xl">
-            ${stats.total_balance.toLocaleString()}
+            ${stats.balance_summary.total_balance.toLocaleString()}
           </div>
         </div>
       </Card>
@@ -18,7 +18,9 @@ export function DashboardOverview({ stats }: { stats: DashboardStats }) {
         <TrendingUp size={32} className="text-blue-600" />
         <div>
           <div className="text-lg font-bold">Total Income</div>
-          <div className="text-2xl">${stats.total_income.toLocaleString()}</div>
+          <div className="text-2xl">
+            ${stats.balance_summary.total_credits.toLocaleString()}
+          </div>
         </div>
       </Card>
       <Card className="flex items-center gap-4 p-4">
@@ -26,7 +28,7 @@ export function DashboardOverview({ stats }: { stats: DashboardStats }) {
         <div>
           <div className="text-lg font-bold">Total Expense</div>
           <div className="text-2xl">
-            ${stats.total_expense.toLocaleString()}
+            ${stats.balance_summary.total_debits.toLocaleString()}
           </div>
         </div>
       </Card>

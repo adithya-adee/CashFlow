@@ -1,6 +1,5 @@
 import type { DashboardStats } from '../types/dashboard';
 import { Card } from '@/components/ui/card';
-// If shadcn chart is not installed, run: bunx --bun shadcn@latest add chart
 import { ChartContainer } from '@/components/ui/chart';
 import {
   BarChart,
@@ -14,8 +13,8 @@ import {
 export function BalanceChart({ stats }: { stats: DashboardStats }) {
   // Example chart data
   const data = [
-    { name: 'Income', value: stats.total_income },
-    { name: 'Expense', value: stats.total_expense },
+    { name: 'Income', value: stats.balance_summary.total_credits },
+    { name: 'Expense', value: stats.balance_summary.total_debits },
   ];
 
   return (

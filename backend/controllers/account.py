@@ -1,6 +1,5 @@
 import os
 import logging
-from typing import Sequence
 from sqlalchemy import delete, select, update, func
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
@@ -96,12 +95,12 @@ async def create_account(
         )
 
 
-@router.get("/list", response_model=list[Account], status_code=status.HTTP_200_OK)
+@router.get("/list", response_model=dict, status_code=status.HTTP_200_OK)
 async def list_accounts(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=1000, description="Maximum records to return"),
     db: AsyncSession = Depends(get_db),
-) -> Sequence[AccountModel]:
+) -> dict:
     """
     Retrieve a paginated list of all bank accounts.
 
@@ -120,6 +119,9 @@ async def list_accounts(
             - 500: Database error during retrieval.
     """
     try:
+        result = await db.execute(select(func.count(AccountModel.id)))
+        total_count = result.scalar_one_or_none() or 0
+
         result = await db.execute(
             select(AccountModel)
             .order_by(AccountModel.id.desc())
@@ -128,7 +130,16 @@ async def list_accounts(
         )
         accounts = result.scalars().all()
 
-        return accounts if accounts else []
+        serialized_accounts = [Account.model_validate(acc) for acc in accounts]
+
+        page_number = (skip // limit) + 1 if limit > 0 else 1
+
+        return {
+            "data": serialized_accounts,
+            "page_size": limit,
+            "page_number": page_number,
+            "total_count": total_count,
+        }
 
     except SQLAlchemyError as e:
         if DEBUG:

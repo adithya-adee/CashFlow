@@ -5,9 +5,8 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status
 
-from schema import TransactionType
+from schema import CashFlow, TransactionType, SuperDashboardQuery
 from models import Account as AccountModel, CashFlow as CashFlowModel
-from schema.dashboard import SuperDashboardQuery
 from database import get_db
 
 router = APIRouter(prefix="/dashboard", tags=["dashboard"])
@@ -53,6 +52,11 @@ async def super_dashboard(
         )
         cashflow_data = result.one()
 
+        result = await db.execute(
+            select(CashFlowModel).order_by(CashFlowModel.created_at.desc()).limit(10)
+        )
+        recent_transactions = result.scalars().all()
+
         total_accounts = accounts_data.total_accounts or 0
         total_balance = float(accounts_data.total_balance or 0.0)
         total_cashflows = cashflow_data.total_cashflows or 0
@@ -60,6 +64,9 @@ async def super_dashboard(
         total_debits_count = cashflow_data.total_debit_count or 0
         total_credits = float(cashflow_data.total_credits or 0.0)
         total_debits = float(cashflow_data.total_debits or 0.0)
+        serialized_recent_transactions = [
+            CashFlow.model_validate(txn) for txn in recent_transactions
+        ]
 
         return {
             "total_counts": {
@@ -73,6 +80,7 @@ async def super_dashboard(
                 "total_credits": total_credits,
                 "total_debits": total_debits,
             },
+            "recent_transactions": serialized_recent_transactions,
         }
 
     except SQLAlchemyError as e:

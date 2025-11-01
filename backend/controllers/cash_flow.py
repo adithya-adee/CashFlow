@@ -1,10 +1,10 @@
 import os
 import logging
-from typing import Sequence
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
 from sqlalchemy import and_, delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status, Query
+from sqlalchemy.sql import func
 
 from models import CashFlow as CashFlowModel, Account as AccountModel
 from schema import CashFlow, CashFlowCreate, CashFlowEdit, TransactionType
@@ -90,7 +90,7 @@ async def create_cashflow(
         )
 
 
-@router.get("/list", response_model=list[CashFlow], status_code=status.HTTP_200_OK)
+@router.get("/list", response_model=dict, status_code=status.HTTP_200_OK)
 async def list_cashflows(
     category: str | None = Query(None, description="Filter by category"),
     txn_type: str | None = Query(None, description="Filter by transaction type"),
@@ -98,7 +98,7 @@ async def list_cashflows(
     skip: int = Query(0, ge=0, description="Number of records to skip"),
     limit: int = Query(100, ge=1, le=1000, description="Maximum records to return"),
     db: AsyncSession = Depends(get_db),
-) -> Sequence[CashFlowModel]:
+) -> dict:
     """
     Retrieve paginated cashflow transactions with optional filters.
     """
@@ -114,12 +114,29 @@ async def list_cashflows(
         if account_id is not None:
             filters.append(CashFlowModel.account_id == account_id)
 
+        total_count_result = await db.execute(
+            select(func.count(CashFlowModel.id)).filter(and_(*filters))
+        )
+        total_count = total_count_result.scalar_one_or_none() or 0
+
         result = await db.execute(
-            select(CashFlowModel).filter(and_(*filters)).offset(skip).limit(limit)
+            select(CashFlowModel)
+            .filter(and_(*filters))
+            .offset(skip)
+            .limit(limit)
+            .order_by(CashFlowModel.created_at)
         )
         cash_flows = result.scalars().all()
+        serialize_cash_flows = [CashFlow.model_validate(cf) for cf in cash_flows]
 
-        return cash_flows if cash_flows else []
+        page_number = (skip // limit) + 1 if limit > 0 else 1
+
+        return {
+            "data": serialize_cash_flows,
+            "page_size": limit,
+            "page_number": page_number,
+            "total_count": total_count,
+        }
 
     except SQLAlchemyError as e:
         if DEBUG:

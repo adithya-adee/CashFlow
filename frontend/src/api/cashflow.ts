@@ -2,16 +2,17 @@ import type {
   CashFlow,
   CashFlowCreate,
   CashFlowEdit,
+  CashFlowList,
 } from '../types/cash_flow';
 
-const BASE_URL = import.meta.env.VITE_BASE_URL
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_BASE = `${BASE_URL}/cashflow`;
 
 export async function listCashFlow(
   filters: Record<string, string | null> = {},
   skip = 0,
   limit = 20
-): Promise<CashFlow[]> {
+): Promise<CashFlowList> {
   const params = new URLSearchParams({
     ...filters,
     skip: String(skip),

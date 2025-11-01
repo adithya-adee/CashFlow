@@ -31,14 +31,14 @@ export function RecentTransactions({
         <TableBody>
           {transactions.slice(0, 5).map((tx) => (
             <TableRow key={tx.id}>
-              <TableCell>{tx.date}</TableCell>
+              <TableCell>{tx.updated_at}</TableCell>
               <TableCell>
-                {tx.type === 'income' ? (
+                {tx.txn_type === 'credit' ? (
                   <ArrowUpRight className="text-green-600" size={18} />
                 ) : (
                   <ArrowDownLeft className="text-red-600" size={18} />
                 )}
-                {tx.type.charAt(0).toUpperCase() + tx.type.slice(1)}
+                {tx.txn_type.charAt(0).toUpperCase() + tx.txn_type.slice(1)}
               </TableCell>
               <TableCell>${tx.amount.toLocaleString()}</TableCell>
               <TableCell>{tx.category}</TableCell>

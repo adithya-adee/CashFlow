@@ -6,17 +6,20 @@ import { MainLayout } from './pages/MainLayout';
 import { Dashboard } from './pages/Dashboard';
 import { Accounts } from './pages/Accounts';
 import { CashFlowPage } from './pages/CashFlow';
+import { ThemeProvider } from './components/theme-provider';
 
 createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<MainLayout />}>
-          <Route index element={<Dashboard />} />
-          <Route path="accounts" element={<Accounts />} />
-          <Route path="cashflow" element={<CashFlowPage />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  </StrictMode>
+  <ThemeProvider>
+    <StrictMode>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<MainLayout />}>
+            <Route index element={<Dashboard />} />
+            <Route path="accounts" element={<Accounts />} />
+            <Route path="cashflow" element={<CashFlowPage />} />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </StrictMode>
+  </ThemeProvider>
 );
