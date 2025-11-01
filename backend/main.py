@@ -11,6 +11,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from database import Base, async_engine
 from controllers import account_router, cashflow_router, dashboard_router
 
+import os
+
+os.environ["DEBUG"] = "True"
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
@@ -40,7 +44,7 @@ app.add_middleware(
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
-    allow_headers=["*"]
+    allow_headers=["*"],
 )
 
 # Account Routes
