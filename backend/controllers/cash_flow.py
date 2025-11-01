@@ -1,13 +1,14 @@
 import os
 import logging
 from sqlalchemy.exc import IntegrityError, SQLAlchemyError
-from sqlalchemy import and_, delete, select, update
+from sqlalchemy import and_, delete, select,  update
+from sqlalchemy.sql.expression import text
 from sqlalchemy.ext.asyncio import AsyncSession
 from fastapi import APIRouter, Depends, HTTPException, status, Query
 from sqlalchemy.sql import func
 
 from models import CashFlow as CashFlowModel, Account as AccountModel
-from schema import CashFlow, CashFlowCreate, CashFlowEdit, TransactionType
+from schema import CashFlow, CashFlowCreate, CashFlowEdit, TransactionType,CashFlowWithAccountDetails
 from database import get_db
 
 router = APIRouter(prefix="/cashflow", tags=["cashflow"])
@@ -92,6 +93,7 @@ async def create_cashflow(
 
 @router.get("/list", response_model=dict, status_code=status.HTTP_200_OK)
 async def list_cashflows(
+    account_no_regex: str | None = Query(None, description="Filter by account number"),
     category: str | None = Query(None, description="Filter by category"),
     txn_type: str | None = Query(None, description="Filter by transaction type"),
     account_id: int | None = Query(None, description="Filter by account ID"),
@@ -114,25 +116,49 @@ async def list_cashflows(
         if account_id is not None:
             filters.append(CashFlowModel.account_id == account_id)
 
-        total_count_result = await db.execute(
-            select(func.count(CashFlowModel.id)).filter(and_(*filters))
-        )
+        query = select(
+            CashFlowModel,
+            AccountModel.bank_account_no,
+            AccountModel.currency
+        ).join(AccountModel, AccountModel.id == CashFlowModel.account_id)
+        count_query = select(func.count(CashFlowModel.id))
+
+        if account_no_regex is not None:
+            count_query = count_query.join(AccountModel, AccountModel.id == CashFlowModel.account_id)
+            # Use the custom REGEXP operator for SQLite
+            filters.append(text(f"Account.bank_account_no REGEXP '{account_no_regex}'"))
+
+        if filters:
+            query = query.filter(and_(*filters))
+            count_query = count_query.filter(and_(*filters))
+
+        total_count_result = await db.execute(count_query)
         total_count = total_count_result.scalar_one_or_none() or 0
 
         result = await db.execute(
-            select(CashFlowModel)
-            .filter(and_(*filters))
-            .offset(skip)
-            .limit(limit)
-            .order_by(CashFlowModel.created_at)
+            query.offset(skip).limit(limit).order_by(CashFlowModel.created_at.desc())
         )
-        cash_flows = result.scalars().all()
-        serialize_cash_flows = [CashFlow.model_validate(cf) for cf in cash_flows]
+        cash_flows_with_account_details = []
+        for cf_model, bank_account_no, currency in result.all():
+            cash_flows_with_account_details.append(
+                CashFlowWithAccountDetails(
+                    id=cf_model.id,
+                    account_id=cf_model.account_id,
+                    txn_type=cf_model.txn_type,
+                    amount=cf_model.amount,
+                    category=cf_model.category,
+                    description=cf_model.description,
+                    created_at=cf_model.created_at,
+                    updated_at=cf_model.updated_at,
+                    bank_account_no=bank_account_no,
+                    currency=currency,
+                )
+            )
 
         page_number = (skip // limit) + 1 if limit > 0 else 1
 
         return {
-            "data": serialize_cash_flows,
+            "data": cash_flows_with_account_details,
             "page_size": limit,
             "page_number": page_number,
             "total_count": total_count,

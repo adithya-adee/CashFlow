@@ -1,6 +1,6 @@
 from .enums import TransactionType, AccountType, Currency
 from .account import AccountBase, AccountCreate, Account, AccountEdit
-from .cash_flow import CashFlowBase, CashFlowCreate, CashFlowEdit, CashFlow
+from .cash_flow import CashFlowBase, CashFlowCreate, CashFlowEdit, CashFlow, CashFlowWithAccountDetails
 from .dashboard import SuperDashboardQuery
 
 __all__ = [
@@ -16,4 +16,5 @@ __all__ = [
     "CashFlowEdit",
     "CashFlow",
     "SuperDashboardQuery",
+    "CashFlowWithAccountDetails"
 ]

@@ -9,15 +9,24 @@ const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_BASE = `${BASE_URL}/cashflow`;
 
 export async function listCashFlow(
-  filters: Record<string, string | null> = {},
+  filters: Record<string, string> = {},
   skip = 0,
   limit = 20
 ): Promise<CashFlowList> {
-  const params = new URLSearchParams({
-    ...filters,
-    skip: String(skip),
-    limit: String(limit),
+  const params = new URLSearchParams();
+
+
+  // Add filters only if they have values
+  Object.entries(filters).forEach(([key, value]) => {
+    if (value) {
+      params.append(key, value);
+    }
   });
+
+  params.append('skip', String(skip));
+  params.append('limit', String(limit));
+
+  console.log(filters)
   const res = await fetch(`${API_BASE}/list?${params}`);
   return res.json();
 }

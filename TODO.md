@@ -1,4 +1,6 @@
-[ ] Implement filter by Account No in Cashflow
+[-] Fix add account and add cashflow , pydantic instance check
+
+[-] Implement filter by Account No in Cashflow
 
 [ ] Update Dockerfile for new import changes in backend
 
