@@ -38,3 +38,10 @@ export interface AccountEdit {
   currency?: string;
   balance?: number;
 }
+
+export interface AccountList {
+  data: Account[];
+  page_size: number;
+  page_number: number;
+  total_count: number;
+}

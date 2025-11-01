@@ -87,3 +87,10 @@ export interface CashFlowEdit {
   category?: string;
   description?: string;
 }
+
+export interface CashFlowList {
+  data: CashFlow[];
+  page_size: number;
+  page_number: number;
+  total_count: number;
+}
