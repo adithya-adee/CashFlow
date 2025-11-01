@@ -2,11 +2,8 @@
 
 [-] Implement filter by Account No in Cashflow
 
-[ ] Update Dockerfile for new import changes in backend
+[-] Update Dockerfile for new import changes in backend
 
-[ ] New CRITICAL Feature
-    - Implement back statement pdf to csv converted
-    - Then from csv to parse bulk write to the account
 
 [ ] Dashboard Layout Suggestion
     - Top Row (KPI Cards):
@@ -18,7 +15,13 @@
     - Bottom Row:
     - Recent Transactions Table | Upcoming Bills/Reminders
 
+[ ] New CRITICAL Feature
+    - Implement back statement pdf to csv converted
+    - Then from csv to parse bulk write to the account
+
 [ ] Implement filters for Account Model
+
+[ ] Implement Sort filters
 
 [ ] Add Github Actions
 
