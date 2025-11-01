@@ -1,7 +1,12 @@
 // TypeScript interfaces for Account schema
 
 // Types matching backend enums
-export type AccountType = 'savings' | 'current_account' | 'fd_account' | 'rd_account' | 'demat_account';
+export type AccountType =
+  | 'savings'
+  | 'current_account'
+  | 'fd_account'
+  | 'rd_account'
+  | 'demat_account';
 export type Currency = 'USD' | 'INR';
 
 export interface Account {

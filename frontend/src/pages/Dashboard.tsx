@@ -17,7 +17,7 @@ export function Dashboard() {
       try {
         const query: SuperDashboardQuery = {};
         const data = await getDashboardStats(query);
-        console.log(data) 
+        console.log(data);
         setStats(data);
         toast.success('Dashboard loaded');
       } catch (e) {

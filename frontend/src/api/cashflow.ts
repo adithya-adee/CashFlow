@@ -4,7 +4,7 @@ import type {
   CashFlowEdit,
 } from '../types/cash_flow';
 
-const BASE_URL = import.meta.env.VITE_BASE_URL
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_BASE = `${BASE_URL}/cashflow`;
 
 export async function listCashFlow(

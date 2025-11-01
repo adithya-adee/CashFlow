@@ -1,6 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Home, List, DollarSign, Wallet } from 'lucide-react';
 import { cn } from '../lib/utils';
+import { ModeToggle } from './mode-toggle';
 
 export function Navbar() {
   const location = useLocation();
@@ -38,6 +39,7 @@ export function Navbar() {
         >
           <DollarSign size={18} /> CashFlow
         </Link>
+        <ModeToggle />
       </div>
     </nav>
   );

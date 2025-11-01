@@ -1,9 +1,5 @@
 import { useEffect, useState } from 'react';
-import {
-  listCashFlow,
-  editCashFlow,
-  deleteCashFlow,
-} from '@/api/cashflow';
+import { listCashFlow, editCashFlow, deleteCashFlow } from '@/api/cashflow';
 import type { CashFlow, CashFlowEdit } from '@/types/cash_flow';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -43,7 +39,7 @@ export function CashFlowPage() {
       const skip = (pageNum - 1) * PAGE_SIZE;
       const data = await listCashFlow({}, skip, PAGE_SIZE);
       setTransactions(data);
-      
+
       // If we got less than PAGE_SIZE items, we're on the last page
       if (data.length < PAGE_SIZE) {
         setTotal(skip + data.length);
@@ -67,8 +63,6 @@ export function CashFlowPage() {
   useEffect(() => {
     fetchTransactions(page);
   }, [page]);
-
-
 
   const handleEdit = async () => {
     if (editId === null) return;
@@ -149,47 +143,53 @@ export function CashFlowPage() {
           <Pagination>
             <PaginationContent>
               <PaginationItem>
-                <PaginationPrevious 
+                <PaginationPrevious
                   href="#"
-                  onClick={e => {
+                  onClick={(e) => {
                     e.preventDefault();
                     if (page > 1) setPage(page - 1);
                   }}
                   className={page <= 1 ? 'pointer-events-none opacity-50' : ''}
                 />
               </PaginationItem>
-              {Array.from({ length: Math.ceil(total / PAGE_SIZE) }).map((_, i) => {
-                const pageNum = i + 1;
-                if (
-                  pageNum === 1 ||
-                  pageNum === Math.ceil(total / PAGE_SIZE) ||
-                  (pageNum >= page - 2 && pageNum <= page + 2)
-                ) {
-                  return (
-                    <PaginationItem key={pageNum}>
-                      <PaginationLink
-                        href="#"
-                        onClick={e => {
-                          e.preventDefault();
-                          setPage(pageNum);
-                        }}
-                        isActive={page === pageNum}
-                      >
-                        {pageNum}
-                      </PaginationLink>
-                    </PaginationItem>
-                  );
+              {Array.from({ length: Math.ceil(total / PAGE_SIZE) }).map(
+                (_, i) => {
+                  const pageNum = i + 1;
+                  if (
+                    pageNum === 1 ||
+                    pageNum === Math.ceil(total / PAGE_SIZE) ||
+                    (pageNum >= page - 2 && pageNum <= page + 2)
+                  ) {
+                    return (
+                      <PaginationItem key={pageNum}>
+                        <PaginationLink
+                          href="#"
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setPage(pageNum);
+                          }}
+                          isActive={page === pageNum}
+                        >
+                          {pageNum}
+                        </PaginationLink>
+                      </PaginationItem>
+                    );
+                  }
+                  return null;
                 }
-                return null;
-              })}
+              )}
               <PaginationItem>
-                <PaginationNext 
+                <PaginationNext
                   href="#"
-                  onClick={e => {
+                  onClick={(e) => {
                     e.preventDefault();
                     if (page < Math.ceil(total / PAGE_SIZE)) setPage(page + 1);
                   }}
-                  className={page >= Math.ceil(total / PAGE_SIZE) ? 'pointer-events-none opacity-50' : ''}
+                  className={
+                    page >= Math.ceil(total / PAGE_SIZE)
+                      ? 'pointer-events-none opacity-50'
+                      : ''
+                  }
                 />
               </PaginationItem>
             </PaginationContent>
@@ -203,12 +203,22 @@ export function CashFlowPage() {
               type="number"
               placeholder="Account ID"
               value={editForm.account_id ?? 0}
-              onChange={e => setEditForm(f => ({ ...f, account_id: Number(e.target.value) }))}
+              onChange={(e) =>
+                setEditForm((f) => ({
+                  ...f,
+                  account_id: Number(e.target.value),
+                }))
+              }
               className="border rounded px-2 py-1"
             />
             <select
               value={editForm.txn_type ?? 'credit'}
-              onChange={e => setEditForm(f => ({ ...f, txn_type: e.target.value as 'credit' | 'debit' }))}
+              onChange={(e) =>
+                setEditForm((f) => ({
+                  ...f,
+                  txn_type: e.target.value as 'credit' | 'debit',
+                }))
+              }
               className="border rounded px-2 py-1"
             >
               <option value="credit">Credit</option>
@@ -218,21 +228,27 @@ export function CashFlowPage() {
               type="number"
               placeholder="Amount"
               value={editForm.amount ?? 0}
-              onChange={e => setEditForm(f => ({ ...f, amount: Number(e.target.value) }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, amount: Number(e.target.value) }))
+              }
               className="border rounded px-2 py-1"
             />
             <input
               type="text"
               placeholder="Category"
               value={editForm.category ?? ''}
-              onChange={e => setEditForm(f => ({ ...f, category: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, category: e.target.value }))
+              }
               className="border rounded px-2 py-1"
             />
             <input
               type="text"
               placeholder="Description"
               value={editForm.description ?? ''}
-              onChange={e => setEditForm(f => ({ ...f, description: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, description: e.target.value }))
+              }
               className="border rounded px-2 py-1"
             />
             <Button onClick={handleEdit} variant="default">

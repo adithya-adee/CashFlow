@@ -1,6 +1,6 @@
 import type { Account, AccountCreate, AccountEdit } from '../types/account';
 
-const BASE_URL = import.meta.env.VITE_BASE_URL
+const BASE_URL = import.meta.env.VITE_BASE_URL;
 const API_BASE = `${BASE_URL}/accounts`;
 
 export async function listAccounts(skip = 0, limit = 20): Promise<Account[]> {

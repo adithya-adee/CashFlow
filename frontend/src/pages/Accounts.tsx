@@ -37,7 +37,7 @@ export function Accounts() {
     setLoading(true);
     try {
       const data = await listAccounts();
-      console.log(data)
+      console.log(data);
       setAccounts(data);
     } catch {
       toast.error('Failed to fetch accounts');
@@ -106,19 +106,28 @@ export function Accounts() {
             type="text"
             placeholder="Account No."
             value={form.bank_account_no}
-            onChange={e => setForm(f => ({ ...f, bank_account_no: e.target.value }))}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, bank_account_no: e.target.value }))
+            }
             className="border rounded px-2 py-1"
           />
           <input
             type="text"
             placeholder="Bank Name"
             value={form.bank_name}
-            onChange={e => setForm(f => ({ ...f, bank_name: e.target.value }))}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, bank_name: e.target.value }))
+            }
             className="border rounded px-2 py-1"
           />
           <select
             value={form.account_type}
-            onChange={e => setForm(f => ({ ...f, account_type: e.target.value as Account['account_type'] }))}
+            onChange={(e) =>
+              setForm((f) => ({
+                ...f,
+                account_type: e.target.value as Account['account_type'],
+              }))
+            }
             className="border rounded px-2 py-1"
           >
             <option value="savings">Savings</option>
@@ -131,12 +140,19 @@ export function Accounts() {
             type="text"
             placeholder="Holder Name"
             value={form.holder_name}
-            onChange={e => setForm(f => ({ ...f, holder_name: e.target.value }))}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, holder_name: e.target.value }))
+            }
             className="border rounded px-2 py-1"
           />
           <select
             value={form.currency}
-            onChange={e => setForm(f => ({ ...f, currency: e.target.value as Account['currency'] }))}
+            onChange={(e) =>
+              setForm((f) => ({
+                ...f,
+                currency: e.target.value as Account['currency'],
+              }))
+            }
             className="border rounded px-2 py-1"
           >
             <option value="INR">INR</option>
@@ -146,7 +162,9 @@ export function Accounts() {
             type="number"
             placeholder="Balance"
             value={form.balance}
-            onChange={e => setForm(f => ({ ...f, balance: Number(e.target.value) }))}
+            onChange={(e) =>
+              setForm((f) => ({ ...f, balance: Number(e.target.value) }))
+            }
             className="border rounded px-2 py-1"
           />
           <Button onClick={handleAdd} variant="default">
@@ -205,19 +223,28 @@ export function Accounts() {
               type="text"
               placeholder="Account No."
               value={editForm.bank_account_no ?? ''}
-              onChange={e => setEditForm(f => ({ ...f, bank_account_no: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, bank_account_no: e.target.value }))
+              }
               className="border rounded px-2 py-1"
             />
             <input
               type="text"
               placeholder="Bank Name"
               value={editForm.bank_name ?? ''}
-              onChange={e => setEditForm(f => ({ ...f, bank_name: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, bank_name: e.target.value }))
+              }
               className="border rounded px-2 py-1"
             />
             <select
               value={editForm.account_type ?? 'savings'}
-              onChange={e => setEditForm(f => ({ ...f, account_type: e.target.value as Account['account_type'] }))}
+              onChange={(e) =>
+                setEditForm((f) => ({
+                  ...f,
+                  account_type: e.target.value as Account['account_type'],
+                }))
+              }
               className="border rounded px-2 py-1"
             >
               <option value="savings">Savings</option>
@@ -230,12 +257,19 @@ export function Accounts() {
               type="text"
               placeholder="Holder Name"
               value={editForm.holder_name ?? ''}
-              onChange={e => setEditForm(f => ({ ...f, holder_name: e.target.value }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, holder_name: e.target.value }))
+              }
               className="border rounded px-2 py-1"
             />
             <select
               value={editForm.currency ?? 'INR'}
-              onChange={e => setEditForm(f => ({ ...f, currency: e.target.value as Account['currency'] }))}
+              onChange={(e) =>
+                setEditForm((f) => ({
+                  ...f,
+                  currency: e.target.value as Account['currency'],
+                }))
+              }
               className="border rounded px-2 py-1"
             >
               <option value="INR">INR</option>
@@ -245,7 +279,9 @@ export function Accounts() {
               type="number"
               placeholder="Balance"
               value={editForm.balance ?? 0}
-              onChange={e => setEditForm(f => ({ ...f, balance: Number(e.target.value) }))}
+              onChange={(e) =>
+                setEditForm((f) => ({ ...f, balance: Number(e.target.value) }))
+              }
               className="border rounded px-2 py-1"
             />
             <Button onClick={handleEdit} variant="default">
